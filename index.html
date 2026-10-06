@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reverse Internship Portal</title>
+<style>
+:root{
+  --teal:#028090;--seafoam:#00A896;--mint:#02C39A;--ink:#0B2B30;
+  --bg:#F4FAF9;--text:#0B2B30;--card:#FFFFFF;--border:#DCEEEC;--muted:#5B7A7D;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#0B2B30;--text:#F4FAF9;--card:#123338;--border:#1C4247;--muted:#9FC7C9;}
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Calibri,Arial,sans-serif;}
+h1,h2,h3{font-family:Cambria,Georgia,serif;margin:0;}
+.wrap{max-width:900px;margin:0 auto;padding:24px;}
+header{background:var(--ink);color:#fff;padding:24px 0;}
+header .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+header h1{font-size:22px;}
+header h1 span{color:var(--mint);}
+nav button{
+  background:transparent;border:1px solid #2A4F54;color:#CFEDEA;padding:8px 14px;border-radius:20px;
+  font-size:13px;cursor:pointer;margin-left:8px;
+}
+nav button.active{background:var(--mint);color:var(--ink);border-color:var(--mint);font-weight:bold;}
+.view{display:none;}
+.view.active{display:block;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px;}
+label{display:block;font-size:12.5px;font-weight:bold;color:var(--muted);margin:14px 0 6px;}
+input,textarea,select{
+  width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);
+  font-family:Calibri,Arial,sans-serif;font-size:14px;background:var(--bg);color:var(--text);
+}
+textarea{resize:vertical;min-height:70px;}
+button.btn{
+  background:var(--teal);color:#fff;border:none;padding:12px 20px;border-radius:8px;
+  font-size:14px;font-weight:bold;cursor:pointer;margin-top:18px;
+}
+button.btn:hover{background:var(--seafoam);}
+button.btn.ghost{background:transparent;border:1px solid var(--teal);color:var(--teal);}
+.msg{font-size:13px;color:var(--mint);margin-top:10px;display:none;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.pcard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;}
+.pcard h3{font-size:16px;margin-bottom:4px;}
+.pcard .meta{font-size:12px;color:var(--muted);margin-bottom:10px;}
+.tag{display:inline-block;background:color-mix(in srgb,var(--teal) 15%, var(--bg) 85%);color:var(--teal);
+  font-size:11px;padding:3px 9px;border-radius:12px;margin:0 6px 6px 0;}
+.pcard p{font-size:13px;color:var(--text);opacity:.85;line-height:1.5;margin-bottom:10px;}
+.empty{color:var(--muted);font-size:13px;text-align:center;padding:30px 0;}
+.filterbar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+.filterbar input{flex:1;min-width:200px;}
+.badge-invited{background:var(--mint);color:#fff;font-size:11px;padding:3px 9px;border-radius:12px;}
+.toprow{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>Reverse<span>.</span>Internship<span>.</span>Portal</h1>
+    <nav id="mainNav">
+      <button data-view="home" class="active">Home</button>
+      <button data-view="studentSignup">I'm a Student</button>
+      <button data-view="companySignup">I'm a Company</button>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- HOME -->
+  <div class="view active" id="home">
+    <div class="card">
+      <h2>Welcome 👋</h2>
+      <p style="margin-top:10px;color:var(--muted);font-size:14px;">
+        This is a working prototype: students build profiles, companies post listings and browse talent.
+        Data is saved right in this browser, so it'll still be here next time you open this file.
+      </p>
+      <button class="btn" onclick="showView('studentSignup')">Create a student profile</button>
+      <button class="btn ghost" onclick="showView('companySignup')">Post as a company</button>
+    </div>
+  </div>
+
+  <!-- STUDENT SIGNUP -->
+  <div class="view" id="studentSignup">
+    <div class="card">
+      <h2>Create your student profile</h2>
+      <form id="studentForm">
+        <label>Full name</label>
+        <input required id="s_name" placeholder="Jordan Lee">
+        <label>Skills (comma separated)</label>
+        <input required id="s_skills" placeholder="React, Figma, Python">
+        <label>University / program</label>
+        <input id="s_school" placeholder="State University — CS">
+        <label>Short bio</label>
+        <textarea id="s_bio" placeholder="A sentence or two about what you're looking for..."></textarea>
+        <label>Portfolio / LinkedIn link</label>
+        <input id="s_link" placeholder="https://...">
+        <button class="btn" type="submit">Save profile</button>
+        <div class="msg" id="s_msg">✓ Profile saved — companies can now find you below.</div>
+      </form>
+    </div>
+    <div class="card">
+      <div class="toprow"><h2>Open listings from companies</h2></div>
+      <div id="studentListings" class="grid" style="margin-top:16px;"></div>
+    </div>
+  </div>
+
+  <!-- COMPANY SIGNUP -->
+  <div class="view" id="companySignup">
+    <div class="card">
+      <h2>Post a listing</h2>
+      <form id="companyForm">
+        <label>Company name</label>
+        <input required id="c_name" placeholder="Acme Inc.">
+        <label>Role title</label>
+        <input required id="c_role" placeholder="Frontend Intern">
+        <label>Skills you're looking for (comma separated)</label>
+        <input required id="c_skills" placeholder="React, CSS">
+        <label>Description</label>
+        <textarea id="c_desc" placeholder="What the intern will work on..."></textarea>
+        <button class="btn" type="submit">Post listing</button>
+        <div class="msg" id="c_msg">✓ Listing posted — it now appears to students.</div>
+      </form>
+    </div>
+    <div class="card">
+      <div class="toprow"><h2>Browse student profiles</h2></div>
+      <div class="filterbar">
+        <input id="filterSkill" placeholder="Filter by skill, e.g. React">
+      </div>
+      <div id="companyStudents" class="grid"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const LS_STUDENTS = "rip_students";
+const LS_LISTINGS = "rip_listings";
+const LS_INVITES = "rip_invites";
+
+const load = (k) => JSON.parse(localStorage.getItem(k) || "[]");
+const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+
+function showView(id){
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.querySelectorAll("#mainNav button").forEach(b => b.classList.toggle("active", b.dataset.view === id));
+  if(id === "studentSignup") renderListings();
+  if(id === "companySignup") renderStudents();
+}
+document.querySelectorAll("#mainNav button").forEach(b => b.onclick = () => showView(b.dataset.view));
+
+// ---- Student form ----
+document.getElementById("studentForm").onsubmit = (e) => {
+  e.preventDefault();
+  const students = load(LS_STUDENTS);
+  students.push({
+    id: Date.now(),
+    name: document.getElementById("s_name").value,
+    skills: document.getElementById("s_skills").value.split(",").map(s=>s.trim()).filter(Boolean),
+    school: document.getElementById("s_school").value,
+    bio: document.getElementById("s_bio").value,
+    link: document.getElementById("s_link").value,
+  });
+  save(LS_STUDENTS, students);
+  document.getElementById("studentForm").reset();
+  const msg = document.getElementById("s_msg");
+  msg.style.display = "block";
+  setTimeout(()=> msg.style.display="none", 3000);
+  renderStudents();
+};
+
+// ---- Company form ----
+document.getElementById("companyForm").onsubmit = (e) => {
+  e.preventDefault();
+  const listings = load(LS_LISTINGS);
+  listings.push({
+    id: Date.now(),
+    company: document.getElementById("c_name").value,
+    role: document.getElementById("c_role").value,
+    skills: document.getElementById("c_skills").value.split(",").map(s=>s.trim()).filter(Boolean),
+    desc: document.getElementById("c_desc").value,
+  });
+  save(LS_LISTINGS, listings);
+  document.getElementById("companyForm").reset();
+  const msg = document.getElementById("c_msg");
+  msg.style.display = "block";
+  setTimeout(()=> msg.style.display="none", 3000);
+  renderListings();
+};
+
+// ---- Render: listings shown to students ----
+function renderListings(){
+  const el = document.getElementById("studentListings");
+  const listings = load(LS_LISTINGS);
+  if(listings.length === 0){ el.innerHTML = '<div class="empty">No listings yet — check back soon.</div>'; return; }
+  el.innerHTML = listings.map(l => `
+    <div class="pcard">
+      <h3>${esc(l.role)}</h3>
+      <div class="meta">${esc(l.company)}</div>
+      <div>${l.skills.map(s=>`<span class="tag">${esc(s)}</span>`).join("")}</div>
+      <p>${esc(l.desc || "")}</p>
+    </div>
+  `).join("");
+}
+
+// ---- Render: students shown to companies (with invite + filter) ----
+function renderStudents(){
+  const el = document.getElementById("companyStudents");
+  const students = load(LS_STUDENTS);
+  const invites = load(LS_INVITES);
+  const filter = (document.getElementById("filterSkill").value || "").toLowerCase().trim();
+  const filtered = filter
+    ? students.filter(s => s.skills.some(sk => sk.toLowerCase().includes(filter)))
+    : students;
+  if(filtered.length === 0){ el.innerHTML = '<div class="empty">No matching students yet.</div>'; return; }
+  el.innerHTML = filtered.map(s => {
+    const invited = invites.includes(s.id);
+    return `
+    <div class="pcard">
+      <h3>${esc(s.name)}</h3>
+      <div class="meta">${esc(s.school || "")}</div>
+      <div>${s.skills.map(sk=>`<span class="tag">${esc(sk)}</span>`).join("")}</div>
+      <p>${esc(s.bio || "")}</p>
+      ${s.link ? `<p style="font-size:12px;"><a href="${esc(s.link)}" target="_blank" style="color:var(--teal);">Portfolio link ↗</a></p>` : ""}
+      ${invited
+        ? `<span class="badge-invited">✓ Invited</span>`
+        : `<button class="btn ghost" style="margin-top:4px;" onclick="inviteStudent(${s.id})">Invite to apply</button>`}
+    </div>`;
+  }).join("");
+}
+function inviteStudent(id){
+  const invites = load(LS_INVITES);
+  if(!invites.includes(id)){ invites.push(id); save(LS_INVITES, invites); }
+  renderStudents();
+}
+document.getElementById("filterSkill").addEventListener("input", renderStudents);
+
+function esc(str){
+  const d = document.createElement("div");
+  d.innerText = str || "";
+  return d.innerHTML;
+}
+
+renderListings();
+renderStudents();
+</script>
+</body>
+</html>
